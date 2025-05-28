@@ -3,6 +3,8 @@ import face_recognition
 import threading
 import time
 
+AUTO_LABELLING = True
+
 # Globals for sharing data between threads
 frame = None
 lock = threading.Lock()
@@ -60,6 +62,12 @@ def face_detection_loop():
                     bbox = (left, top, right - left, bottom - top)
                     tracker = cv2.TrackerKCF.create()
                     tracker.init(frame, bbox)
+                    
+                    if AUTO_LABELLING and name == "Unknown":
+                        name = "Person " + str(len(known_face_encodings)+1)
+                        known_face_encodings.append(face_encodings[0])
+                        known_face_names.append(name)
+                    
                     tracking_name = name
 
 # Start webcam
